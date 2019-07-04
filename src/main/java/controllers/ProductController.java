@@ -1,4 +1,3 @@
 package controllers;
 
-public class ProductController {
-}
+public class ProductController {}
