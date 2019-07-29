@@ -27,4 +27,9 @@ public class Department {
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
+
+    @Override
+    public String toString() {
+        return "id = " + departmentId + " name = " + departmentName;
+    }
 }

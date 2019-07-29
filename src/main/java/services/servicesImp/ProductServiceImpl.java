@@ -12,7 +12,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao = new ProductDaoImpl();
 
     @Override
-    public void addProduct(Product product) {
+    public void createProduct(Product product) {
         productDao.createProduct(product);
     }
 

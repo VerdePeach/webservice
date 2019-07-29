@@ -3,30 +3,28 @@ package daoImpl;
 import businessLogic.Util;
 import dao.ProductDao;
 import model.Product;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
+
+    private static final Logger logger = Logger.getRootLogger();
+
     @Override
     public void createProduct(Product product) {
         PreparedStatement preparedStatement = null;
         Connection connection = Util.connection();
         try {
-            if(product.getProductId() <= 0) {
-                preparedStatement = connection.prepareStatement("INSERT INTO products (product_id, product_name, department_id) VALUES (product_seq.nextval, ?, ?)");
-                preparedStatement.setString(1, product.getProductName());
-                preparedStatement.setInt(2, product.getDepartmentId());
-            } else {
-                preparedStatement = connection.prepareStatement("INSERT INTO products (product_id, product_name, department_id) VALUES (?, ?, ?)");
-                preparedStatement.setInt(1, product.getProductId());
-                preparedStatement.setString(2, product.getProductName());
-                preparedStatement.setInt(3, product.getDepartmentId());
-            }
+            preparedStatement = connection.prepareStatement("INSERT INTO products (product_id, product_name, department_id) VALUES (product_seq.nextval, ?, ?)");
+            preparedStatement.setString(1, product.getProductName());
+            preparedStatement.setInt(2, product.getDepartmentId());
             preparedStatement.executeUpdate();
+            logger.info("Product was created successfully.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Product creating was failed.", e);
         } finally {
             Util.close(preparedStatement, connection);
         }
@@ -34,16 +32,17 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void editProduct(Product product) {
-        Statement statement = null;
+        PreparedStatement statement = null;
         Connection connection = Util.connection();
         try {
-
-            if (!product.getProductName().equals("")) {
-                statement = connection.createStatement();
-                statement.executeUpdate("UPDATE products SET product_name = '" + product.getProductName() + "' WHERE product_id = " + product.getProductId());
-            }
+            statement = connection.prepareStatement("UPDATE products SET product_name = ?, department_id = ? WHERE product_id = ?");
+            statement.setString(1,product.getProductName());
+            statement.setInt(2,product.getDepartmentId());
+            statement.setInt(3,product.getProductId());
+            statement.executeUpdate();
+            logger.info("Product was edited successfully.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Product editing was failed.", e);
         } finally {
             Util.close(statement, connection);
         }
@@ -56,8 +55,9 @@ public class ProductDaoImpl implements ProductDao {
         try {
             statement = connection.createStatement();
             statement.executeUpdate("DELETE FROM products WHERE product_id = " + product_id);
+            logger.info("Product was deleted successfully.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Product deleting was failed.", e);
         } finally {
             Util.close(statement, connection);
         }
@@ -75,8 +75,9 @@ public class ProductDaoImpl implements ProductDao {
             product.setProductId(resultSet.getInt("product_id"));
             product.setProductName(resultSet.getString("product_name"));
             product.setDepartmentId(resultSet.getInt("department_id"));
+            logger.info("Product with id: " + product_id + " was found successfully.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Product with id: " + product_id + " was not found.");
         } finally {
             Util.close(statement, connection);
         }
@@ -98,14 +99,12 @@ public class ProductDaoImpl implements ProductDao {
                 product.setDepartmentId(resultSet.getInt("department_id"));
                 productList.add(product);
             }
+            logger.info("All products were got successfully.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Products were not got", e);
         } finally {
             Util.close(statement, connection);
-
         }
         return productList;
     }
-
-
 }
