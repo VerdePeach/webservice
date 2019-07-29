@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource
+            name="jdbc/ServiceOracleBase"
+            auth="Container"
+            type="javax.sql.DataSource"
+            driverClassName="oracle.jdbc.driver.OracleDriver"
+            url="jdbc:oracle:thin:@localhost:1522:xe"
+            username="SYSTEM" password="vladbright"/>
+</Context>
