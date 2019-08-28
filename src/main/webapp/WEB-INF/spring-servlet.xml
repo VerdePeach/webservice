@@ -17,4 +17,9 @@
 
     <mvc:view-controller path="/homepage" view-name="index"/>
     <mvc:view-controller path="/contact" view-name="contact"/>
+
+    <mvc:resources mapping="/resources/css/**" location="/resources/css/" />
+    <mvc:resources mapping="/resources/css/department/**" location="/resources/css/department" />
+    <mvc:resources mapping="/resources/css/model/**" location="/resources/css/model" />
+    <mvc:resources mapping="/resources/css/product/**" location="/resources/css/product" />
 </beans>
