@@ -48,7 +48,7 @@ public class DepartmentController {
     @RequestMapping(value = "/rest/addDepartment{name}", method = RequestMethod.GET)
     public List addDepartmentRest(@RequestParam String name) {
         Department department = null;
-        if (!name.equals("")) {
+        if (!name.equals(null)) {
             department = new Department();
             department.setDepartmentName(name);
             try {
