@@ -29,6 +29,11 @@ public class DepartmentController {
         return departmentView;
     }
 
+    @RequestMapping(value = "/rest/departments", method = RequestMethod.GET)
+    public List getDepartments() {
+        return departmentService.getAllDepartments();
+    }
+
     @RequestMapping(value = "/addDepartment", method = RequestMethod.POST)
     public List<Department> addDepartment(@RequestBody Department department) {
         try {
@@ -36,6 +41,21 @@ public class DepartmentController {
             logger.info("New department: " + department.getDepartmentName() +  " created successfully.");
         } catch (Exception e) {
             logger.error("Creation of department: " + department.getDepartmentName() +  " was failed: " + e +".");
+        }
+        return departmentService.getAllDepartments();
+    }
+
+    @RequestMapping(value = "/rest/addDepartment{name}", method = RequestMethod.GET)
+    public List addDepartmentRest(@RequestParam String name) {
+        Department department = null;
+        if (!name.equals("")) {
+            department = new Department();
+            department.setDepartmentName(name);
+            try {
+                departmentService.createDepartment(department);
+            } catch (Exception e) {
+                logger.error("Creation of department: " + department.getDepartmentName() +  " was failed: " + e +".");
+            }
         }
         return departmentService.getAllDepartments();
     }
@@ -51,6 +71,22 @@ public class DepartmentController {
         return departmentService.getAllDepartments();
     }
 
+    @RequestMapping(value = "/rest/editDepartment{id}{name}", method = RequestMethod.GET)
+    public List editDepartmentRest(@RequestParam int id, @RequestParam String name) {
+        Department department = null;
+        if (!name.equals(null) && id > 0 ) {
+            department = new Department();
+            department.setDepartmentName(name);
+            department.setDepartmentId(id);
+            try {
+                departmentService.updateDepartment(department);
+            } catch (Exception e) {
+                logger.error("Edition of department with ID: " + department.getDepartmentId() +  " was failed: " + e +".");
+            }
+        }
+        return departmentService.getAllDepartments();
+    }
+
     @RequestMapping(value = "/deleteDepartment", method = RequestMethod.POST)
     public  List<Department> deleteDepartment(@RequestBody Department department) {
         try {
@@ -58,6 +94,19 @@ public class DepartmentController {
             logger.info("Department with ID " + department.getDepartmentId() + " was deleted successfully.");
         } catch (Exception e) {
             logger.error("Deleting of department with ID: " + department.getDepartmentId() +  " was failed: " + e +".");
+        }
+        return departmentService.getAllDepartments();
+    }
+
+    @RequestMapping(value = "/rest/deleteDepartment{id}", method = RequestMethod.GET)
+    public List editDepartmentRest(@RequestParam int id) {
+        if (id > 0 ) {
+            try {
+                departmentService.deleteDepartmentById(id);
+                logger.info("Department with ID " + id + " was deleted successfully.");
+            } catch (Exception e) {
+                logger.error("Deleting of department with ID: " + id +  " was failed: " + e +".");
+            }
         }
         return departmentService.getAllDepartments();
     }
@@ -78,5 +127,10 @@ public class DepartmentController {
             return getDepartmentView();
         }
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/rest/getDepartment{id}", method = RequestMethod.GET)
+    public Department getDepartmentRest(@RequestParam int id) {
+        return departmentService.getDepartmentById(id);
     }
 }

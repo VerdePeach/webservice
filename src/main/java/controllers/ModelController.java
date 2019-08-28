@@ -23,7 +23,7 @@ public class ModelController {
     private ModelService modelService = new ModelServiceImpl();
 
     @RequestMapping(value = "/models", method = RequestMethod.GET)
-    public ModelAndView getModelView() {
+    public ModelAndView getModels() {
         ModelAndView modelAndView = null;
         try {
             modelAndView = new ModelAndView("models");
@@ -81,5 +81,76 @@ public class ModelController {
             logger.error("Forming of ModelAndView for model with ID: " + id +  " was failed: " + e +".");
         }
         return modelAndView;
+    }
+
+    @RestController
+    @RequestMapping("/rest")
+    private class RestModelController {
+
+        @RequestMapping(value = "/models", method = RequestMethod.GET)
+        public List getModelsRest() {
+            return  modelService.getAllModels();
+        }
+
+        @RequestMapping(value = "/addModel{name}{baseModelId}{productId}{price}{maxSpeed}{fuel}{engine}", method = RequestMethod.GET)
+        public List<Model> addModelRest(@RequestParam String name, @RequestParam int baseModelId, @RequestParam int productId,
+                                    @RequestParam float price, @RequestParam float maxSpeed, @RequestParam String fuel,
+                                    @RequestParam String engine) {
+            if (!name.equals(null) && baseModelId > 0 && productId > 0) {
+                Model model = new Model();
+                model.setModelName(name);
+                model.setBaseModelId(baseModelId);
+                model.setProductId(productId);
+                model.setPrice(price);
+                model.setMaxSpeed(maxSpeed);
+                model.setFuel(fuel);
+                model.setEngine(engine);
+                try {
+                    modelService.createModel(model);
+                } catch (Exception e) {
+                    logger.error("Creation of model: " + model.getModelName() +  " was failed: " + e +".");
+                }
+            }
+            return modelService.getAllModels();
+        }
+
+        @RequestMapping(value = "/editModel{id}{name}{baseModelId}{productId}{price}{maxSpeed}{fuel}{engine}", method = RequestMethod.GET)
+        public List<Model> editModelRest(@RequestParam int id, @RequestParam String name, @RequestParam int baseModelId, @RequestParam int productId,
+                                    @RequestParam float price, @RequestParam float maxSpeed, @RequestParam String fuel,
+                                    @RequestParam String engine) {
+            if (!name.equals(null) && baseModelId > 0 && productId > 0) {
+                Model model = new Model();
+                model.setModelId(id);
+                model.setModelName(name);
+                model.setBaseModelId(baseModelId);
+                model.setProductId(productId);
+                model.setPrice(price);
+                model.setMaxSpeed(maxSpeed);
+                model.setFuel(fuel);
+                model.setEngine(engine);
+                try {
+                    modelService.updateModel(model);
+                } catch (Exception e) {
+                    logger.error("Creation of model: " + model.getModelName() +  " was failed: " + e +".");
+                }
+            }
+            return modelService.getAllModels();
+        }
+
+        @RequestMapping(value = "/deleteModel{id}", method = RequestMethod.GET)
+        public List deleteModelRest(@RequestParam int id) {
+            try {
+                modelService.deleteModelById(id);
+                logger.info("Model with ID " + id + " was deleted successfully.");
+            } catch (Exception e) {
+                logger.error("Deleting of model with ID: " + id +  " was failed: " + e +".");
+            }
+            return  modelService.getAllModels();
+        }
+
+        @RequestMapping(value = "/getModel{id}", method = RequestMethod.GET)
+        public Model getModelRest(@RequestParam int id) {
+            return  modelService.getModelById(id);
+        }
     }
 }

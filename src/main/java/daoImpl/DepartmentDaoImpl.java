@@ -1,6 +1,7 @@
 package daoImpl;
 
 import businessLogic.Util;
+import com.mysql.cj.jdbc.StatementImpl;
 import dao.DepartmentDao;
 import model.Department;
 import org.apache.log4j.Logger;

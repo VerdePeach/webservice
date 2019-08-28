@@ -20,7 +20,7 @@ public class ProductController {
     private ProductService productService = new ProductServiceImpl();
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
-    public ModelAndView getDepartmentView() {
+    public ModelAndView getProductView() {
         ModelAndView productView = null;
         try {
             productView = new ModelAndView("products");
@@ -79,4 +79,62 @@ public class ProductController {
         return modelAndView;
     }
 
+    @RestController
+    @RequestMapping("/rest")
+    private class ProductControllerRest {
+
+        @RequestMapping(value = "/products", method = RequestMethod.GET)
+        public List getProductsRest() {
+            return productService.getAllProducts();
+        }
+
+        @RequestMapping(value = "/addProduct{name}{depId}", method = RequestMethod.GET)
+        public List addProductRest(@RequestParam String name, @RequestParam int depId) {
+            if (!name.equals(null) && depId > 0) {
+                Product product = new Product();
+                product.setProductName(name);
+                product.setDepartmentId(depId);
+                try {
+                    productService.createProduct(product);
+                } catch (Exception e) {
+                    logger.error("Creation of product: " + product.getProductName() +  " was failed: " + e +".");
+                }
+            }
+            return productService.getAllProducts();
+        }
+
+        @RequestMapping(value = "/editProduct{id}{name}{depId}", method = RequestMethod.GET)
+        public List addProductRest(@RequestParam int id, @RequestParam String name, @RequestParam int depId) {
+            if (!name.equals(null) && depId > 0) {
+                Product product = new Product();
+                product.setProductId(id);
+                product.setProductName(name);
+                product.setDepartmentId(depId);
+                try {
+                    productService.updateProduct(product);
+                } catch (Exception e) {
+                    logger.error("Edition of product with ID: " + product.getProductId() +  " was failed: " + e +".");
+                }
+            }
+            return productService.getAllProducts();
+        }
+
+        @RequestMapping(value = "/deleteProduct{id}", method = RequestMethod.GET)
+        public List addProductRest(@RequestParam int id) {
+            if (id > 0) {
+                try {
+                    productService.deleteProductById(id);
+                    logger.info("Product with ID " + id + " was deleted successfully.");
+                } catch (Exception e) {
+                    logger.error("Deleting of product with ID: " + id +  " was failed: " + e +".");
+                }
+            }
+            return productService.getAllProducts();
+        }
+
+        @RequestMapping(value = "/getProduct{id}", method = RequestMethod.GET)
+        public Product getProductByIdRest(@RequestParam int id) {
+            return productService.getProductById(id);
+        }
+    }
 }
