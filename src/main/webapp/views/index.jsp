@@ -9,6 +9,8 @@
     <meta charset="UTF-8">
     <title>Car service</title>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <link href="<spring:url value="/resources/css/main.css" />" rel="stylesheet" type="text/css" />
 
 </head>
@@ -44,7 +46,7 @@
                 It`s nice to Meet you
             </h1>
         </div>
-        <a class="button" href="/web_service_war_exploded/departments">Tell Me More</a>
+        <a class="button" href="/web_service_war_exploded/departments" >Tell Me More</a>
     </div>
 </header>
 </body>

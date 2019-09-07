@@ -13,7 +13,13 @@
 <head>
     <title>Our departments</title>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <!--
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <link href="<spring:url value="/resources/css/product/products.css" />" rel="stylesheet" type="text/css" />
 </head>
@@ -74,14 +80,25 @@
             <label>
                 <p>Name</p>
                 <input id="prod_name_add" type="text" placeholder="Name" />
-                <p>Department ID</p>
+                <p>Choose Department</p>
+                <!--dynamic search-->
+                <input id="select_dep_add" type="text" placeholder="Department">
+
+
+
+                <!--
                 <select id="select_dep_add" size="">
                     <option disabled>Choose department</option>
                     <c:forEach items="${departmentList}" var="department">
                         <option value="<c:out value="${department.departmentId}"></c:out>"> ${department.departmentId} ${department.departmentName}</option>
                     </c:forEach>
                 </select>
+                -->
+
+
+
             </label>
+
             <br>
             <button class="myButtonAction" onclick="addEntProd()" >Add product</button>
         </div>
@@ -91,13 +108,18 @@
                 <input id="prod_id_edit" type="text" placeholder="ID"/>
                 <p>Name</p>
                 <input id="prod_name_edit" type="text" placeholder="Name"/>
-                <p>Department ID</p>
+                <p>Choose Department</p>
+                <input id="select_dep_edit" type="text" placeholder="Department">
+
+                <!--
                 <select id="select_dep_edit" size="">
                     <option disabled>Choose department</option>
                     <c:forEach items="${departmentList}" var="department">
                         <option value="<c:out value="${department.departmentId}"></c:out>"> ${department.departmentId} ${department.departmentName}</option>
                     </c:forEach>
                 </select>
+                -->
+
             </label>
             <br>
             <button class="myButtonAction" onclick="editEntProd()" >Edit product</button>
@@ -120,10 +142,25 @@
         </div>
     </section>
 </header>
-<b id="message"></b>
-
-
 </body>
+
+<script>
+    /* ?????????? ??????*/
+    $( function() {
+        var availableTags = [];
+        <c:forEach items="${departmentList}" var="department">
+        var str = '${department.departmentId} ${department.departmentName}';
+        availableTags.push(str);
+        </c:forEach>
+        $( "#select_dep_add" ).autocomplete({
+            source: availableTags
+        });
+
+        $( "#select_dep_edit" ).autocomplete({
+            source: availableTags
+        });
+    });
+</script>
 
 <script type="text/javascript" >
 
@@ -155,10 +192,36 @@
         $("#get_by_id").show(600);
     }
 
+
+    function formIdAll(str) {
+        var myStr = str
+        var formId = '';
+        for (var i = 0; i < str.length; i++) {
+            if (myStr[i] == ' ')
+                break;
+            if (myStr[i] > -1 && myStr[i] < 10) {
+                formId += myStr[i];
+            }
+        }
+        return formId;
+    }
+
     function addEntProd() {
+        var formId = formIdAll($("#select_dep_add").val());
+/*
+        var myStr = $("#select_dep_add").val();
+        var formId = '';
+        for (var i = 0; i < $("#select_dep_add").val().length; i++) {
+            if (myStr[i] == ' ')
+                break;
+            if (myStr[i] > -1 && myStr[i] < 10) {
+                formId += myStr[i];
+            }
+        }
+*/
         var product = {
             productName : $("#prod_name_add").val(),
-            departmentId : $("#select_dep_add option:selected").val()
+            departmentId : formId
         };
         $.ajax({
             url: "/web_service_war_exploded/addProduct",
@@ -177,10 +240,11 @@
     }
 
     function editEntProd() {
-        alert($("#prod_name_add").val());
+        var formId = formIdAll($("#select_dep_edit").val());
+
         var product = {productId : $("#prod_id_edit").val(),
             productName : $("#prod_name_edit").val(),
-            departmentId : $("#select_dep_edit option:selected").val()
+            departmentId : formId
         };
         $.ajax({
             url: "/web_service_war_exploded/editProduct",
@@ -233,6 +297,7 @@
         htmlTable += "</tbody>";
         $("#table_dark").html(htmlTable);
     }
+
 </script>
 </html>
 

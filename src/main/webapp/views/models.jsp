@@ -13,7 +13,9 @@
 <head>
     <title>Our departments</title>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <link href="<spring:url value="/resources/css/model/models.css" />" rel="stylesheet" type="text/css" />
 </head>
@@ -84,20 +86,27 @@
             <label>
                 <p>Name</p>
                 <input id="model_name_add" type="text" placeholder="Name" />
-                <p>Base model ID</p>
+                <p>Choose Base model</p>
+                <input id="select_model_add" type="text" placeholder="Model" >
+                <!--
                 <select id="select_model_add" size="">
                     <option disabled>Choose base model</option>
                     <c:forEach items="${modelList}" var="model">
                         <option value="<c:out value="${model.modelId}"></c:out>"> ${model.modelId} ${model.modelName}</option>
                     </c:forEach>
                 </select>
-                <p>Product ID</p>
+                -->
+
+                <p>Choose Product</p>
+                <input id="select_product_add" type="text" placeholder="Product" >
+                <!--
                 <select id="select_product_add" size="">
                     <option disabled>Choose product</option>
                     <c:forEach items="${productList}" var="product">
                         <option value="<c:out value="${product.productId}"></c:out>"> ${product.productId} ${product.productName}</option>
                     </c:forEach>
                 </select>
+                -->
                 <p>Price</p>
                 <input id="model_price_add" type="text" placeholder="Price" />
                 <p>MAX speed</p>
@@ -116,20 +125,27 @@
                 <input id="model_id_edit" type="text" placeholder="ID"/>
                 <p>Name</p>
                 <input id="model_name_edit" type="text" placeholder="Name" />
-                <p>Base model ID</p>
+                <p>Choose Base model</p>
+                <input id="select_model_edit" type="text" placeholder="Model" >
+                <!--
                 <select id="select_model_edit" size="">
                     <option disabled>Choose base model</option>
                     <c:forEach items="${modelList}" var="model">
                         <option value="<c:out value="${model.modelId}"></c:out>"> ${model.modelId} ${model.modelName}</option>
                     </c:forEach>
                 </select>
-                <p>Product ID</p>
+                -->
+
+                <p>Choose Product</p>
+                <input id="select_product_edit" type="text" placeholder="Product" >
+                <!--
                 <select id="select_product_edit" size="">
                     <option disabled>Choose product</option>
                     <c:forEach items="${productList}" var="product">
                         <option value="<c:out value="${product.productId}"></c:out>"> ${product.productId} ${product.productName}</option>
                     </c:forEach>
                 </select>
+                -->
                 <p>Price</p>
                 <input id="model_price_edit" type="text" placeholder="Price" />
                 <p>MAX speed</p>
@@ -162,6 +178,35 @@
 </header>
 </body>
 
+<script>
+    /* ?????????? ??????*/
+    $( function() {
+        var availableTags = [];
+        var availableTags1 = [];
+        <c:forEach items="${modelList}" var="model">
+            var str = '${model.modelId} ${model.modelName}';
+            availableTags.push(str);
+        </c:forEach>
+        <c:forEach items="${productList}" var="product">
+            var str1 = '${product.productId} ${product.productName}';
+            availableTags1.push(str1);
+        </c:forEach>
+        $( "#select_model_add" ).autocomplete({
+            source: availableTags
+        });
+        $( "#select_product_add" ).autocomplete({
+            source: availableTags1
+        });
+
+        $( "#select_model_edit" ).autocomplete({
+            source: availableTags
+        });
+        $( "#select_product_edit" ).autocomplete({
+            source: availableTags1
+        });
+    });
+</script>
+
 <script type="text/javascript" >
 
     function addModel() {
@@ -192,12 +237,27 @@
         $("#get_by_id").show(600);
     }
 
+    function formIdAll(str) {
+        var myStr = str
+        var formId = '';
+        for (var i = 0; i < str.length; i++) {
+            if (myStr[i] == ' ')
+                break;
+            if (myStr[i] > -1 && myStr[i] < 10) {
+                formId += myStr[i];
+            }
+        }
+        return formId;
+    }
+
     function addEntModel() {
-        alert($("#model_name_add").val());
+        var baseModel = formIdAll($("#select_model_add").val());
+        var prodId = formIdAll($("#select_product_add").val());
+
         var model = {
             modelName : $("#model_name_add").val(),
-            baseModelId : $("#select_model_add option:selected").val(),
-            productId : $("#select_product_add option:selected").val(),
+            baseModelId : baseModel,
+            productId : prodId,
             price : $("#model_price_add").val(),
             maxSpeed : $("#model_speed_add").val(),
             fuel : $("#model_fuel_add").val(),
@@ -220,12 +280,14 @@
     }
 
     function editEntModel() {
-        alert($("#prod_name_edit").val());
+        var baseModel = formIdAll($("#select_model_add").val());
+        var prodId = formIdAll($("#select_product_add").val());
+
         var model = {
             modelId : $("#model_id_edit").val(),
             modelName : $("#model_name_edit").val(),
-            baseModelId : $("#select_model_edit option:selected").val(),
-            productId : $("#select_product_edit option:selected").val(),
+            baseModelId : baseModel,
+            productId : prodId,
             price : $("#model_price_edit").val(),
             maxSpeed : $("#model_speed_edit").val(),
             fuel : $("#model_fuel_edit").val(),
